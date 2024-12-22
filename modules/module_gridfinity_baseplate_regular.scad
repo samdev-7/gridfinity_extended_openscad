@@ -20,7 +20,8 @@ module baseplate_regular(
   cornerScrewEnabled = true,
   weightHolder = true,
   cornerRadius = gf_cup_corner_radius,
-  roundedCorners = 15) {
+  roundedCorners = 15,
+  centerMagnetSize= [0, 0]) {
 
   //These should be base constants
   minFloorThickness = 1;
@@ -65,6 +66,7 @@ module baseplate_regular(
             cornerScrewEnabled = cornerScrewEnabled,
             weightHolder = weightHolder,
             cornerRadius = cornerRadius,
-            roundedCorners = roundedCorners);
+            roundedCorners = roundedCorners,
+            centerMagnetSize = centerMagnetSize);
         }
 }

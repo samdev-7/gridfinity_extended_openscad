@@ -86,8 +86,16 @@ module grid_block(
         for(y =[0:1:num_y-1])
         {
           color(getColour(color_basehole))
-          translate([x*gf_pitch,y*gf_pitch,-fudgeFactor])
-            cylinder(h=center_magnet_size[iCylinderDimension_Height]-fudgeFactor, d=center_magnet_size[iCylinderDimension_Diameter], $fn=$fn);
+          translate([x*gf_pitch + gf_pitch/2,y*gf_pitch+ gf_pitch/2,-fudgeFactor])
+            //cylinder(h=center_magnet_size[iCylinderDimension_Height]-fudgeFactor, d=center_magnet_size[iCylinderDimension_Diameter], $fn=$fn);
+            MagnetAndScrewRecess(
+              magnetDiameter = center_magnet_size[iCylinderDimension_Diameter],
+              magnetThickness = center_magnet_size[iCylinderDimension_Height]-fudgeFactor,
+              screwDiameter = 0,
+              screwDepth = 0,
+              overhangFixLayers = overhang_fix,
+              overhangFixDepth = overhang_fix_depth,
+              easyMagnetRelease = magnet_easy_release != MagnetEasyRelease_off);
         }
       }
     }

@@ -198,7 +198,8 @@ module baseplate_cavities(
   cornerScrewEnabled = false,
   weightHolder = false,
   cornerRadius = gf_cup_corner_radius,
-  roundedCorners = 15) {
+  roundedCorners = 15,
+  centerMagnetSize = [0,0]) {
 
   assert(is_num(num_x) && num_x >= 0 && num_x <=1, "num_x must be a number between 0 and 1");
   assert(is_num(num_y) && num_y >= 0 && num_y <=1, "num_y must be a number between 0 and 1");
@@ -231,6 +232,8 @@ module baseplate_cavities(
             cylinder(d1=8.5, d2=3.5, h=counterSinkDepth, $fn=24);
         }
       }
+      translate([0, 0, baseCavityHeight-magnetSize[1]-fudgeFactor*3])
+        cylinder(d=centerMagnetSize[0], h=centerMagnetSize[1] + fudgeFactor*2, $fn=48);
       
       if(_weightHolder){
         translate([-10.7, -10.7, -fudgeFactor]) 
@@ -262,29 +265,66 @@ module baseplate_cavities(
           cornerScrewEnabled ? 8.5 : 0,
           magnetSize[0]) + magnetborder;
 
-        difference(){
-          translate([-gf_pitch/2,-gf_pitch/2,0])
-            cube([gf_pitch,gf_pitch,baseCavityHeight]);
-          if((cornerScrewEnabled || magnetSize[0]> 0))
-          translate([0, 0, -fudgeFactor*2]) 
-          gridcopycorners(r=magnet_position, num_x=num_x, num_y=num_y, center= true) {
-            rdeg =
-              $gcci[2] == [ 1, 1] ? 90 :
-              $gcci[2] == [-1, 1] ? 180 :
-              $gcci[2] == [-1,-1] ? -90 :
-              $gcci[2] == [ 1,-1] ? 0 : 0;
-            rotate([0,0,rdeg])
-              //magnet retaining ring
-              union(){
-                magnetSupportWidth = max(17/2,supportDiameter);
-                cylinder(d=supportDiameter, h=baseCavityHeight+fudgeFactor*4, $fn=48);
+         
+        if (centerMagnetSize[0] == 0){
+            difference(){
+              translate([-gf_pitch/2,-gf_pitch/2,0])
+                cube([gf_pitch,gf_pitch,baseCavityHeight]);
+              if((cornerScrewEnabled || magnetSize[0]> 0))
+              translate([0, 0, -fudgeFactor*2]) 
+              gridcopycorners(r=magnet_position, num_x=num_x, num_y=num_y, center= true) {
+                rdeg =
+                  $gcci[2] == [ 1, 1] ? 90 :
+                  $gcci[2] == [-1, 1] ? 180 :
+                  $gcci[2] == [-1,-1] ? -90 :
+                  $gcci[2] == [ 1,-1] ? 0 : 0;
+                rotate([0,0,rdeg])
+                  //magnet retaining ring
+                  union(){
+                    magnetSupportWidth = max(17/2,supportDiameter);
+                    cylinder(d=supportDiameter, h=baseCavityHeight+fudgeFactor*4, $fn=48);
 
-                translate([magnetSupportWidth/2, -magnetSupportWidth/2+supportDiameter/2, baseCavityHeight/2]) 
-                  cube([magnetSupportWidth,magnetSupportWidth,baseCavityHeight+fudgeFactor*6],center = true);
+                    translate([magnetSupportWidth/2, -magnetSupportWidth/2+supportDiameter/2, baseCavityHeight/2]) 
+                      cube([magnetSupportWidth,magnetSupportWidth,baseCavityHeight+fudgeFactor*6],center = true);
 
-                translate([magnetSupportWidth/2-supportDiameter/2, -magnetSupportWidth/2, baseCavityHeight/2]) 
-                  cube([magnetSupportWidth,magnetSupportWidth,baseCavityHeight+fudgeFactor*6],center = true);
-              }
+                    translate([magnetSupportWidth/2-supportDiameter/2, -magnetSupportWidth/2, baseCavityHeight/2]) 
+                      cube([magnetSupportWidth,magnetSupportWidth,baseCavityHeight+fudgeFactor*6],center = true);
+                  }
+                }
+            }
+        } else {
+            difference(){
+                translate([-gf_pitch/2,-gf_pitch/2,0])
+                    cube([gf_pitch,gf_pitch,baseCavityHeight]);
+                translate([0, 0, -fudgeFactor*2])
+                union() {
+                    gridcopycorners(r=magnet_position, num_x=num_x, num_y=num_y, center= true) {
+                        rdeg =
+                          $gcci[2] == [ 1, 1] ? 90 :
+                          $gcci[2] == [-1, 1] ? 180 :
+                          $gcci[2] == [-1,-1] ? -90 :
+                          $gcci[2] == [ 1,-1] ? 0 : 0;
+                        rotate([0,0,rdeg])
+                          //magnet retaining ring
+                          union(){
+                            magnetSupportWidth = max(17/2,supportDiameter);
+                            cylinder(d=supportDiameter, h=baseCavityHeight+fudgeFactor*4, $fn=48);
+                           }
+                   }
+                
+                    cylinder(d=supportDiameter, h=baseCavityHeight+fudgeFactor*4, $fn=48);
+                    
+                    
+                    magnetSupportWidth = max(17/2,supportDiameter);
+                    supportSquareWidth = sqrt(2)*(gf_pitch-2*supportDiameter)/2;
+                    echo(magnet_position);
+                    for (i = [0,90,180,270]) {
+                        rotate([0, 0, i])
+                        rotate([0,0,45])
+                        translate([0,-supportDiameter/2,0])
+                            cube([magnet_position+gf_pitch,supportDiameter,baseCavityHeight+fudgeFactor*4]);
+                    }
+                }
             }
         }
       }
@@ -327,3 +367,5 @@ module outer_baseplate(
       }
     }
 }
+
+baseplate_cavities(1,1, 12);

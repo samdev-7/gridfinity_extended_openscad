@@ -30,6 +30,8 @@ plate_corner_radius = 3.75; //[0:0.01:3.75]
 Enable_Magnets = true;
 //size of magnet, diameter and height. Zacks original used 6.5 and 2.4 
 Magnet_Size = [6.5, 2.4];  // .1
+//size of center magnet, diameter and height.
+Center_Magnet_Size = [0, 0];
 
 //Enable screws in the bin corner under the magnets
 Corner_Screw_Enabled = true;
@@ -124,5 +126,6 @@ else{
       butterflyClipRadius = Butterfly_Clip_Radius,
       filamentClipEnabled=Filament_Clip_Enabled,
       filamentClipDiameter=Filament_Clip_Diameter,
-      filamentClipLength=Filament_Clip_Length);
+      filamentClipLength=Filament_Clip_Length,
+      centerMagnetSize=Center_Magnet_Size);
 }

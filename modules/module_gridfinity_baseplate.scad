@@ -15,6 +15,7 @@ Default_Oversize_method = "fill"; //[crop, fill]
 Default_Enable_Magnets = true;
 //size of magnet, diameter and height. Zacks original used 6.5 and 2.4 
 Default_Magnet_Size = [6.5, 2.4];  // .1
+Default_Center_Magnet_Size = [0 , 0];
 
 /* [Base Plate Clips - POC dont use yet]*/
 //This feature is not yet finalised, or working properly. 
@@ -55,7 +56,8 @@ module gridfinity_baseplate(
   butterflyClipRadius = Default_Butterfly_Clip_Radius,
   filamentClipEnabled = Default_Filament_Clip_Enabled,
   filamentClipDiameter = Default_Filament_Clip_Diameter,
-  filamentClipLength = Default_Filament_Clip_Length)
+  filamentClipLength = Default_Filament_Clip_Length,
+  centerMagnetSize = Default_Center_Magnet_Size)
 {
   _gridPositions = customGridEnabled ? gridPositions : [[1]];
   width = oversizeMethod == "fill" ? num_x : ceil(num_x);
@@ -93,7 +95,8 @@ module gridfinity_baseplate(
               filamentClipDiameter = filamentClipDiameter,
               filamentClipLength = filamentClipLength,
               plate_corner_radius = plate_corner_radius,
-              roundedCorners = _gridPositions[xi][yi] == 1 ? 15 : _gridPositions[xi][yi] - 2);
+              roundedCorners = _gridPositions[xi][yi] == 1 ? 15 : _gridPositions[xi][yi] - 2,
+              centerMagnetSize = centerMagnetSize);
           }
         }
       }
@@ -126,7 +129,8 @@ module baseplate(
   butterflyClipRadius = Default_Butterfly_Clip_Radius,
   filamentClipEnabled = Default_Filament_Clip_Enabled,
   filamentClipDiameter = Default_Filament_Clip_Diameter,
-  filamentClipLength = Default_Filament_Clip_Length)
+  filamentClipLength = Default_Filament_Clip_Length,
+  centerMagnetSize = [0,0])
 {
   assert_openscad_version();
   
@@ -157,7 +161,8 @@ module baseplate(
           cornerScrewEnabled = cornerScrewEnabled,
           weightHolder = weightedEnable,
           cornerRadius = plate_corner_radius,
-          roundedCorners=roundedCorners);
+          roundedCorners=roundedCorners,
+          centerMagnetSize = centerMagnetSize);
       }
     }
     
